@@ -29,7 +29,7 @@
 </head>
 <body>
   <div class="block">
-    <p>i'm a post producer.</p>
+    <p>i'm a post producer in brooklyn, ny.</p>
     <p>it's <span id="hourmin">00:00</span>:<span id="seconds">00</span> so <span id="status"></span></p>
     <p>brb afk.</p>
   </div>
@@ -37,11 +37,29 @@
   <script>
     function updateStatus() {
       const now = new Date();
-      const hour = now.getHours();
-      const minute = now.getMinutes();
+
+      const options = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'America/New_York'
+      };
+
+      const timeParts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+
+      let hour = 0;
+      let minute = 0;
+      let second = 0;
+      timeParts.forEach(part => {
+        if (part.type === 'hour') hour = parseInt(part.value);
+        if (part.type === 'minute') minute = parseInt(part.value);
+        if (part.type === 'second') second = parseInt(part.value);
+      });
+
       const hourStr = hour.toString().padStart(2, '0');
       const minuteStr = minute.toString().padStart(2, '0');
-      const secondStr = now.getSeconds().toString().padStart(2, '0');
+      const secondStr = second.toString().padStart(2, '0');
 
       document.getElementById("hourmin").innerText = `${hourStr}:${minuteStr}`;
       document.getElementById("seconds").innerText = secondStr;
